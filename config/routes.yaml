@@ -1,3 +1,28 @@
 index:
     path: /
     controller: App\Controller\HomeController::index
+
+api_short_url_read:
+    path: /api/short-url
+    controller: App\Controller\ShortUrlApiController::read
+    methods: [GET]
+
+api_short_url_read_single:
+    path: /api/short-url/{id}
+    controller: App\Controller\ShortUrlApiController::readSingle
+    methods: [GET]
+
+api_short_url_create:
+    path: /api/short-url
+    controller: App\Controller\ShortUrlApiController::create
+    methods: [POST]
+
+api_short_url_update:
+    path: /api/short-url/{id}
+    controller: App\Controller\ShortUrlApiController::update
+    methods: [PUT]
+
+api_short_url_delete:
+    path: /api/short-url
+    controller: App\Controller\ShortUrlApiController::delete
+    methods: [DELETE]
