@@ -1,0 +1,12 @@
+App\Entity\ShortUrl:
+    constraints:
+      - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: urlId
+    properties:
+      url:
+        - NotBlank: ~
+        - Url: ~
+      urlId:
+        - NotBlank: ~
+        - Length:
+            min: 4
+            max: 4

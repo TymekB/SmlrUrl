@@ -18,3 +18,26 @@
         </div>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        $('.btn').click(function(){
+            console.log('clicked');
+
+            $.ajax({
+                method: 'post',
+                url: '/api/short-url',
+                data: {url: 'test'},
+                success: function(data) {
+                    console.log(data);
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+        });
+
+    </script>
+{% endblock %}
