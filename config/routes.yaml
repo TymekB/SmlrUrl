@@ -2,6 +2,10 @@ index:
     path: /
     controller: App\Controller\HomeController::index
 
+redirect:
+    path: /{urlId}
+    controller: App\Controller\RedirectController::index
+
 api_short_url_read:
     path: /api/short-url
     controller: App\Controller\ShortUrlApiController::read
