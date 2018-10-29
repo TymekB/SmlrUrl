@@ -9,10 +9,12 @@
 
             <div class="text-center">
                 <div class="form-group">
-                    <input type="text" placeholder="Your URL" class="form-control" style="margin-top: 30px">
+                    <input type="text" placeholder="Your URL" class="form-control" id="url" style="margin-top: 30px">
                 </div>
 
-                <button class="btn btn-primary">Shorten!</button>
+                <button class="btn btn-primary" id="action-btn">Shorten!</button>
+                <button class="btn btn-info" id="copy-btn" style="display: none">Copy link!</button>
+
             </div>
 
         </div>
@@ -23,20 +25,46 @@
     {{ parent() }}
 
     <script>
-        $('.btn').click(function(){
-            console.log('clicked');
+        $('#action-btn').click(function(){
+
+            let url = $('#url').val();
+            let jsonData = JSON.stringify({url: url});
 
             $.ajax({
                 method: 'post',
                 url: '/api/short-url',
-                data: {url: 'test'},
+                data: jsonData,
+                contentType: "application/json; charset=utf-8",
                 success: function(data) {
-                    console.log(data);
+
+                    let shortUrl = location.href + data.urlId;
+
+                    $("#url").val(shortUrl);
+                    $("#copy-btn").show();
+
+                    $.toast({
+                        heading: 'Success!',
+                        text: 'Your url has been successfuly created <a href="'+shortUrl+'">click here</a> to redirect.',
+                        hideAfter: false,
+                        icon: 'success'
+                    });
                 },
                 error: function(data) {
-                    console.log(data);
+                    $.toast({
+                        heading: 'Error!',
+                        text: 'Something went wrong. Check if your url is correct.',
+                        hideAfter: false,
+                        icon: 'error'
+                    });
                 }
             });
+        });
+
+        $('#copy-btn').click(function(){
+
+            $("#url").select();
+            document.execCommand("copy");
+
         });
 
     </script>

@@ -52,7 +52,7 @@ class ShortUrlApiController extends AbstractController
 
     public function create(Request $request)
     {
-        $result = ['success' => true];
+        $result = ['success' => true, 'urlId' => ''];
         $data = json_decode($request->getContent());
 
         if(!isset($data->url)) {
@@ -73,6 +73,8 @@ class ShortUrlApiController extends AbstractController
 
         $this->entityManager->persist($shortUrl);
         $this->entityManager->flush();
+
+        $result['urlId'] = $shortUrl->getUrlId();
 
         return $this->json($result, Response::HTTP_CREATED);
     }

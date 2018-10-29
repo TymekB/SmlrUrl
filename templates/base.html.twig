@@ -5,6 +5,7 @@
         <title>{% block title %}SmlrURL{% endblock %}</title>
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('css/app.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/jquery.toast.css') }}">
         {% endblock %}
     </head>
     <body>
@@ -16,6 +17,7 @@
 
         {% block javascripts %}
             <script src="{{ asset('js/jquery.min.js') }}"></script>
+            <script src="{{ asset('js/jquery.toast.min.js') }}"></script>
             <script src="{{ asset('js/app.min.js') }}"></script>
         {% endblock %}
     </body>
