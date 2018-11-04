@@ -1,12 +1,28 @@
 <nav class="navbar navbar-default">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">SmlrURL</a>
+            <a class="navbar-brand" href="{{ path('index') }}">SmlrURL</a>
         </div>
         <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">Sign in</a></li>
-            <li><a href="#">Register</a></li>
+
+            {% if app.user %}
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        {{ app.user.username }} <span class="caret"></span>
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <li><a href="#">History</a></li>
+                        <li><a href="#">API key</a></li>
+                        <li><a href="{{ path('app_logout') }}">Logout</a></li>
+                    </ul>
+                </li>
+            {% else %}
+                <li><a href="{{ path('login') }}">Sign in</a></li>
+                <li><a href="#">Register</a></li>
+            {% endif %}
+
+
             <li><a href="#">API</a></li>
         </ul>
     </div>

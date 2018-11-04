@@ -2,6 +2,13 @@ index:
     path: /
     controller: App\Controller\HomeController::index
 
+login:
+    path: /login
+    controller: App\Controller\SecurityController::login
+
+app_logout:
+    path: /logout
+
 redirect:
     path: /{urlId}
     controller: App\Controller\RedirectController::index
