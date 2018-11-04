@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\ShortUrl;
 use App\Repository\ShortUrlRepository;
+use App\ShortUrl\Exception\ShortUrlDataNotFound;
 use App\ShortUrl\ShortUrlUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -79,7 +80,7 @@ class ShortUrlApiController extends AbstractController
         $data = json_decode($request->getContent());
 
         if(!isset($data->url)) {
-            throw $this->createNotFoundException();
+            throw new ShortUrlDataNotFound();
         }
 
         $this->shortUrlUpdater->update($id, $data->url);
@@ -92,7 +93,7 @@ class ShortUrlApiController extends AbstractController
         $data = json_decode($request->getContent());
 
         if(!isset($data->id)) {
-            throw $this->createNotFoundException();
+            throw new ShortUrlDataNotFound();
         }
 
         $this->shortUrlUpdater->delete($data->id);
