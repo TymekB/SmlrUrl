@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ShortUrlRepository")
  */
-class ShortUrl
+class ShortUrl implements \JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -25,6 +25,11 @@ class ShortUrl
      * @ORM\Column(type="string", length=255)
      */
     private $urlId;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="shortUrls")
+     */
+    private $user;
 
     public function getId(): ?int
     {
@@ -53,5 +58,29 @@ class ShortUrl
         $this->urlId = $urlId;
 
         return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return ["id" => $this->getId(), "url" => $this->getUrL(), "token" => $this->getUrlId()];
     }
 }

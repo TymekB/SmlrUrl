@@ -58,5 +58,7 @@ class ShortUrlExceptionSubscriber implements EventSubscriberInterface
 
             $event->setResponse($response);
         }
+
+        return;
     }
 }

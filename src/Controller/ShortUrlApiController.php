@@ -4,13 +4,15 @@ namespace App\Controller;
 
 use App\Entity\ShortUrl;
 use App\Repository\ShortUrlRepository;
+use App\Security\ShortUrlVoter;
 use App\ShortUrl\Exception\ShortUrlDataNotFound;
-use App\ShortUrl\ShortUrlUpdater;
+use App\ShortUrl\Updater;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,36 +28,38 @@ class ShortUrlApiController extends AbstractController
     /**
      * @var EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
     /**
      * @var ValidatorInterface
      */
     private $validator;
     /**
-     * @var ShortUrlUpdater
+     * @var Updater
      */
     private $shortUrlUpdater;
 
-    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $entityManager, ValidatorInterface $validator, ShortUrlUpdater $shortUrlUpdater)
+    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, ValidatorInterface $validator, Updater $shortUrlUpdater)
     {
         $this->shortUrlRepository = $shortUrlRepository;
-        $this->entityManager = $entityManager;
+        $this->em = $em;
         $this->validator = $validator;
         $this->shortUrlUpdater = $shortUrlUpdater;
     }
 
     public function read()
     {
-        $urls = $this->shortUrlRepository->findAll();
+        $urls = $this->getUser()->getShortUrls();
 
         return $this->json($urls);
     }
 
     public function readSingle($id)
     {
-        $url = $this->shortUrlRepository->find($id);
+        $shortUrl = $this->shortUrlRepository->find($id);
 
-        return $this->json($url);
+        $this->denyAccessUnlessGranted(ShortUrlVoter::VIEW, $shortUrl);
+
+        return $this->json($shortUrl);
     }
 
     public function create(Request $request)
@@ -69,7 +73,9 @@ class ShortUrlApiController extends AbstractController
         }
 
         $token = substr(md5(microtime()),rand(0,26),4);
-        $this->shortUrlUpdater->create($data->url, $token);
+
+        $user = $this->getUser();
+        $this->shortUrlUpdater->create($data->url, $token, $user);
 
         $result['urlId'] = $token;
         return $this->json($result, Response::HTTP_CREATED);
@@ -83,7 +89,10 @@ class ShortUrlApiController extends AbstractController
             throw new ShortUrlDataNotFound();
         }
 
-        $this->shortUrlUpdater->update($id, $data->url);
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->find($id);
+        $this->denyAccessUnlessGranted(ShortUrlVoter::EDIT, $shortUrl);
+
+        $this->shortUrlUpdater->update($shortUrl, $data->url);
 
         return $this->json(['success' => true]);
     }
@@ -96,7 +105,10 @@ class ShortUrlApiController extends AbstractController
             throw new ShortUrlDataNotFound();
         }
 
-        $this->shortUrlUpdater->delete($data->id);
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->find($data->id);
+        $this->denyAccessUnlessGranted(ShortUrlVoter::EDIT, $shortUrl);
+
+        $this->shortUrlUpdater->delete($shortUrl);
 
         return $this->json(['success' => true]);
     }

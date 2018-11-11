@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -38,6 +41,16 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      */
     private $apiToken;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ShortUrl", mappedBy="user")
+     */
+    private $shortUrls;
+
+    public function __construct()
+    {
+        $this->shortUrls = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -132,5 +145,36 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @return Collection|ShortUrl[]
+     */
+    public function getShortUrls(): Collection
+    {
+        return $this->shortUrls;
+    }
+
+    public function addShortUrl(ShortUrl $shortUrl): self
+    {
+        if (!$this->shortUrls->contains($shortUrl)) {
+            $this->shortUrls[] = $shortUrl;
+            $shortUrl->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShortUrl(ShortUrl $shortUrl): self
+    {
+        if ($this->shortUrls->contains($shortUrl)) {
+            $this->shortUrls->removeElement($shortUrl);
+            // set the owning side to null (unless already changed)
+            if ($shortUrl->getUser() === $this) {
+                $shortUrl->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

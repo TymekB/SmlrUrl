@@ -10,13 +10,14 @@ namespace App\ShortUrl;
 
 
 use App\Entity\ShortUrl;
+use App\Entity\User;
 use App\Repository\ShortUrlRepository;
 use App\ShortUrl\Exception\ShortUrlIsNotValidException;
 use App\ShortUrl\Exception\ShortUrlNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ShortUrlUpdater
+class Updater
 {
     /**
      * @var EntityManagerInterface
@@ -30,17 +31,20 @@ class ShortUrlUpdater
     public function __construct(EntityManagerInterface $em, ValidatorInterface $validator)
     {
         $this->em = $em;
-        $this->validator = $validator;}
+        $this->validator = $validator;
+    }
 
-    public function create($url, $token)
+    public function create($url, $token, ?User $user)
     {
         $shortUrl = new ShortUrl();
         $shortUrl->setUrl($url);
         $shortUrl->setUrlId($token);
+        $shortUrl->setUser($user);
+
 
         $errors = $this->validator->validate($shortUrl);
 
-        if(count($errors) > 0) {
+        if (count($errors) > 0) {
             throw new ShortUrlIsNotValidException($errors);
         }
 
@@ -50,11 +54,9 @@ class ShortUrlUpdater
         return true;
     }
 
-    public function update($id, $url)
+    public function update(ShortUrl $shortUrl, $url)
     {
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->find($id);
-
-        if(!$shortUrl) {
+        if (!$shortUrl) {
             throw new ShortUrlNotFoundException();
         }
 
@@ -62,7 +64,7 @@ class ShortUrlUpdater
 
         $errors = $this->validator->validate($shortUrl);
 
-        if(count($errors) > 0) {
+        if (count($errors) > 0) {
             throw new ShortUrlIsNotValidException($errors);
         }
 
@@ -71,11 +73,9 @@ class ShortUrlUpdater
         return true;
     }
 
-    public function delete($id)
+    public function delete(ShortUrl $shortUrl)
     {
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->find($id);
-
-        if(!$shortUrl) {
+        if (!$shortUrl) {
             throw new ShortUrlNotFoundException();
         }
 
