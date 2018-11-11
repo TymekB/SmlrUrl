@@ -13,6 +13,10 @@ register:
     path: /register
     controller: App\Controller\RegistrationController::register
 
+history:
+    path: /history
+    controller: App\Controller\UserController::history
+
 redirect:
     path: /{urlId}
     controller: App\Controller\RedirectController::index
