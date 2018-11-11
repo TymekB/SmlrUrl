@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h1>Create an account</h1>
+                    <hr>
+
+                    {{ form_start(form) }}
+                    {{ form_row(form.username) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.password.first) }}
+                    {{ form_row(form.password.second) }}
+
+                    <button class="btn btn-primary">Register!</button>
+                    {{ form_end(form) }}
+
+                    {% include 'init/messages.html.twig' %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

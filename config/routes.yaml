@@ -9,6 +9,10 @@ login:
 app_logout:
     path: /logout
 
+register:
+    path: /register
+    controller: App\Controller\RegistrationController::register
+
 redirect:
     path: /{urlId}
     controller: App\Controller\RedirectController::index
