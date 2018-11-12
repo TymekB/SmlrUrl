@@ -1,19 +1,24 @@
-function showAll(DOMElement) {
+class ShortUrl
+{
+    constructor(DOMElement) {
+        this.DOMElement = DOMElement;
+    }
 
-    console.log('showing all..');
+    showAll() {
+        let _this = this;
 
-    $.ajax({
-        method: 'GET',
-        url: '/api/short-url',
-        success: function(data) {
+        $.ajax({
+            method: 'GET',
+            url: '/api/short-url',
+            success: function(data) {
 
-            let output = '';
+                let output = '';
 
-            $.each(data, function(index, shortUrl) {
+                $.each(data, function(index, shortUrl) {
 
-                let link = window.location.host + "/" + shortUrl.token;
+                    let link = window.location.host + "/" + shortUrl.token;
 
-                output += `
+                    output += `
                         <tr data-id="${shortUrl.id}">
                         
                             <td>${shortUrl.id}</td>
@@ -60,93 +65,98 @@ function showAll(DOMElement) {
                         </tr>
 
                 `;
-            });
+                });
 
-            $(DOMElement).html(output);
+                $(_this.DOMElement).html(output);
+                _this.init();
+            }
+        });
+    }
 
-            $('.delete-action').click(function() {
+    update(id, url) {
+        let _this = this;
+        let jsonData = JSON.stringify({url: url});
 
-                if(!confirm("Are you sure?")) {
-                    return;
-                }
+        $.ajax({
+            method: 'PUT',
+            data: jsonData,
+            url: '/api/short-url/'+id,
+            success: function(data) {
 
-                let id = $(this).parent().parent().data("id");
+                $('#modal-'+id).modal('toggle');
 
-                remove(id);
-            });
+                $.toast({
+                    heading: 'Success!',
+                    text: 'Your url has been successfully updated!',
+                    hideAfter: false,
+                    icon: 'success'
+                });
 
-            $('.update-action').click(function(){
+                setTimeout(function(){
+                    _this.showAll("#data");
+                }, 1000);
+            },
+            error: function(data) {
+                $.toast({
+                    heading: 'Error!',
+                    text: 'Something went wrong. Try again later.',
+                    hideAfter: false,
+                    icon: 'error'
+                });
+            }
+        });
+    }
 
-                let id = $(this).data('id');
-                let url = $('#url-'+id).val();
+    remove(id) {
+        let _this = this;
+        let jsonData = JSON.stringify({id: id});
 
-                update(id, url);
-            });
-        }
-    });
-}
+        $.ajax({
+            method: 'DELETE',
+            data: jsonData,
+            url: '/api/short-url',
+            success: function(data) {
+                $.toast({
+                    heading: 'Success!',
+                    text: 'Your url has been successfully deleted!',
+                    hideAfter: false,
+                    icon: 'success'
+                });
 
-function update(id, url) {
+                _this.showAll();
+            },
+            error: function(data) {
+                $.toast({
+                    heading: 'Error!',
+                    text: 'Something went wrong. Try again later.',
+                    hideAfter: false,
+                    icon: 'error'
+                });
+            }
+        });
+    }
 
-    let jsonData = JSON.stringify({url: url});
+    init() {
 
-    $.ajax({
-        method: 'PUT',
-        data: jsonData,
-        url: '/api/short-url/'+id,
-        success: function(data) {
+        let _this = this;
 
-            $('#modal-'+id).modal('toggle');
+        $('.delete-action').click(function() {
 
-            $.toast({
-                heading: 'Success!',
-                text: 'Your url has been successfully updated!',
-                hideAfter: false,
-                icon: 'success'
-            });
+            if(!confirm("Are you sure?")) {
+                return;
+            }
 
-            setTimeout(function(){
-                showAll("#data");
-            }, 1000);
+            let id = $(this).parent().parent().data("id");
 
-        },
-        error: function(data) {
-            $.toast({
-                heading: 'Error!',
-                text: 'Something went wrong. Try again later.',
-                hideAfter: false,
-                icon: 'error'
-            });
-            console.log(data);
-        }
-    });
-}
+            _this.remove(id);
+        });
 
-function remove(id) {
+        $('.update-action').click(function(){
 
-    let jsonData = JSON.stringify({id: id});
+            let id = $(this).data('id');
+            let url = $('#url-'+id).val();
 
-    $.ajax({
-        method: 'DELETE',
-        data: jsonData,
-        url: '/api/short-url',
-        success: function(data) {
-            $.toast({
-                heading: 'Success!',
-                text: 'Your url has been successfully deleted!',
-                hideAfter: false,
-                icon: 'success'
-            });
-        },
-        error: function(data) {
-            $.toast({
-                heading: 'Error!',
-                text: 'Something went wrong. Try again later.',
-                hideAfter: false,
-                icon: 'error'
-            });
-        }
-    });
-
-    showAll("#data");
+            _this.update(id, url);
+        });
+    }
 }
