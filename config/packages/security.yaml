@@ -36,3 +36,5 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/short-url/*, roles: ROLE_USER, methods: [GET, PUT, DELETE] }
+        - { path: ^/history }
+        - { path: ^/api-key }
