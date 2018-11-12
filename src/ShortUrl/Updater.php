@@ -54,7 +54,7 @@ class Updater
         return true;
     }
 
-    public function update(ShortUrl $shortUrl, $url)
+    public function update(ShortUrl $shortUrl, string $url)
     {
         if (!$shortUrl) {
             throw new ShortUrlNotFoundException();
@@ -65,7 +65,18 @@ class Updater
         $errors = $this->validator->validate($shortUrl);
 
         if (count($errors) > 0) {
-            throw new ShortUrlIsNotValidException($errors);
+
+            $msg = "";
+            foreach($errors as $key => $error) {
+
+                $msg.= $error->getMessage();
+
+                if($key > 0) {
+                    $msg.= ",";
+                }
+            }
+
+            throw new ShortUrlIsNotValidException($msg);
         }
 
         $this->em->flush();

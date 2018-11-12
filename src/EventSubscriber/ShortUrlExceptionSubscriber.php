@@ -51,9 +51,19 @@ class ShortUrlExceptionSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getException();
 
-        if($exception instanceof ShortUrlIsNotValidException || $exception instanceof ShortUrlNotFoundException || $exception instanceof ShortUrlDataNotFound) {
+        if($exception instanceof ShortUrlNotFoundException || $exception instanceof ShortUrlDataNotFound) {
 
             $response = new JsonResponse(['success' => false]);
+            $response->setStatusCode(JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+
+            $event->setResponse($response);
+        }
+
+        if($exception instanceof ShortUrlIsNotValidException) {
+
+            $errorMessages = explode(",", $exception->getMessage());
+
+            $response = new JsonResponse(['success' => false, 'error_messages' => $errorMessages]);
             $response->setStatusCode(JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
 
             $event->setResponse($response);
