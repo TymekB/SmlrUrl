@@ -10,7 +10,6 @@ namespace App\User;
 
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 
 class ApiTokenGenerator
 {

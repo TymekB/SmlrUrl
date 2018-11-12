@@ -15,7 +15,11 @@ register:
 
 history:
     path: /history
-    controller: App\Controller\UserController::history
+    controller: App\Controller\DashboardController::history
+
+api_key:
+    path: /api-key
+    controller: App\Controller\DashboardController::apiKey
 
 redirect:
     path: /{urlId}

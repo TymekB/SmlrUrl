@@ -21,7 +21,9 @@ security:
             provider: db_provider
             logout:
                 path:   app_logout
-
+            guard:
+                authenticators:
+                    - App\Security\TokenAuthenticator
             # activate different ways to authenticate
 
             # http_basic: true
