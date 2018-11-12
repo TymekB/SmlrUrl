@@ -97,9 +97,18 @@ class ShortUrl
                 }, 1000);
             },
             error: function(data) {
+
+                let output = `<ul>`;
+
+                $(data.responseJSON.error_messages).each(function(index, message) {
+                   output += `<li>` + message + `</li>`;
+                });
+
+                output += `</ul>`;
+
                 $.toast({
                     heading: 'Error!',
-                    text: 'Something went wrong. Try again later.',
+                    text: output,
                     hideAfter: false,
                     icon: 'error'
                 });
