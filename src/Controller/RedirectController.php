@@ -20,7 +20,7 @@ class RedirectController extends AbstractController
 
     public function index($urlId)
     {
-        $shortUrl = $this->shortUrlRepository->findOneBy(['urlId' => $urlId]);
+        $shortUrl = $this->shortUrlRepository->findOneBy(['token' => $urlId]);
 
         if(!$shortUrl) {
             throw $this->createNotFoundException();

@@ -8,16 +8,9 @@ use App\Security\ShortUrlVoter;
 use App\ShortUrl\Exception\ShortUrlDataNotFound;
 use App\ShortUrl\Updater;
 use Doctrine\ORM\EntityManagerInterface;
-use Hashids\Hashids;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\JsonEncode;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ShortUrlApiController extends AbstractController
 {
@@ -30,19 +23,14 @@ class ShortUrlApiController extends AbstractController
      */
     private $em;
     /**
-     * @var ValidatorInterface
-     */
-    private $validator;
-    /**
      * @var Updater
      */
     private $shortUrlUpdater;
 
-    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, ValidatorInterface $validator, Updater $shortUrlUpdater)
+    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, Updater $shortUrlUpdater)
     {
         $this->shortUrlRepository = $shortUrlRepository;
         $this->em = $em;
-        $this->validator = $validator;
         $this->shortUrlUpdater = $shortUrlUpdater;
     }
 

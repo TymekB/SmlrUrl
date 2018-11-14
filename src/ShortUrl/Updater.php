@@ -38,7 +38,7 @@ class Updater
     {
         $shortUrl = new ShortUrl();
         $shortUrl->setUrl($url);
-        $shortUrl->setUrlId($token);
+        $shortUrl->setToken($token);
         $shortUrl->setUser($user);
 
 

@@ -24,7 +24,7 @@ class ShortUrl implements \JsonSerializable
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $urlId;
+    private $token;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="shortUrls")
@@ -48,14 +48,14 @@ class ShortUrl implements \JsonSerializable
         return $this;
     }
 
-    public function getUrlId(): ?string
+    public function getToken(): ?string
     {
-        return $this->urlId;
+        return $this->token;
     }
 
-    public function setUrlId(string $urlId): self
+    public function setToken(string $token): self
     {
-        $this->urlId = $urlId;
+        $this->token = $token;
 
         return $this;
     }
@@ -81,6 +81,6 @@ class ShortUrl implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return ["id" => $this->getId(), "url" => $this->getUrL(), "token" => $this->getUrlId()];
+        return ["id" => $this->getId(), "url" => $this->getUrL(), "token" => $this->getToken()];
     }
 }

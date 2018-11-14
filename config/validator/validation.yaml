@@ -1,15 +1,10 @@
 App\Entity\ShortUrl:
     constraints:
-      - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: urlId
+      - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: token
     properties:
       url:
         - NotBlank: ~
         - Url: ~
-      urlId:
-        - NotBlank: ~
-        - Length:
-            min: 4
-            max: 4
 
 App\Entity\User:
   constraints:
