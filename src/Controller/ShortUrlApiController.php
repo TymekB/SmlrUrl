@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Conversion\NumberConverter;
 use App\Entity\ShortUrl;
+use App\Entity\User;
 use App\Repository\ShortUrlRepository;
 use App\Security\ShortUrlVoter;
 use App\ShortUrl\Exception\ShortUrlDataNotFound;
+use App\ShortUrl\ShortUrlTokenDecorator;
 use App\ShortUrl\Updater;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,18 +33,24 @@ class ShortUrlApiController extends AbstractController
      * @var NumberConverter
      */
     private $converter;
+    /**
+     * @var ShortUrlTokenDecorator
+     */
+    private $shortUrlTokenDecorator;
 
-    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, Updater $shortUrlUpdater, NumberConverter $converter)
+    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, Updater $shortUrlUpdater, NumberConverter $converter, ShortUrlTokenDecorator $shortUrlTokenDecorator)
     {
         $this->shortUrlRepository = $shortUrlRepository;
         $this->em = $em;
         $this->shortUrlUpdater = $shortUrlUpdater;
         $this->converter = $converter;
+        $this->shortUrlTokenDecorator = $shortUrlTokenDecorator;
     }
 
     public function read()
     {
         $urls = $this->getUser()->getShortUrls();
+        $this->shortUrlTokenDecorator->encodeTokenFromCollection($urls);
 
         return $this->json($urls);
     }
@@ -53,8 +61,7 @@ class ShortUrlApiController extends AbstractController
 
         $this->denyAccessUnlessGranted(ShortUrlVoter::VIEW, $shortUrl);
 
-        $token = $this->converter->encode($shortUrl->getToken(), NumberConverter::TOKEN);
-        $shortUrl->setToken($token);
+        $this->shortUrlTokenDecorator->encodeToken($shortUrl);
 
         return $this->json($shortUrl);
     }
@@ -69,11 +76,12 @@ class ShortUrlApiController extends AbstractController
             return $this->json($result, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $randomNumber = mt_rand(100000, 999999);
-
+        $randomNumber = mt_rand(10000000, 99999999);
         $shortUrl = $this->shortUrlUpdater->create($data->url, $randomNumber, $this->getUser());
 
-        $result['token'] = $this->converter->encode($shortUrl->getToken(), NumberConverter::TOKEN);
+        $this->shortUrlTokenDecorator->encodeToken($shortUrl);
+        $result['token'] = $shortUrl->getToken();
+
         return $this->json($result, Response::HTTP_CREATED);
     }
 

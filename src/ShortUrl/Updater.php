@@ -11,7 +11,6 @@ namespace App\ShortUrl;
 
 use App\Entity\ShortUrl;
 use App\Entity\User;
-use App\Repository\ShortUrlRepository;
 use App\ShortUrl\Exception\ShortUrlIsNotValidException;
 use App\ShortUrl\Exception\ShortUrlNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
