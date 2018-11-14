@@ -22,7 +22,7 @@ api_key:
     controller: App\Controller\DashboardController::apiKey
 
 redirect:
-    path: /{urlId}
+    path: /{token}
     controller: App\Controller\RedirectController::index
 
 api_short_url_read:

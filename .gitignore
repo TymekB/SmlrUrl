@@ -15,8 +15,6 @@
 /.web-server-pid
 ###< symfony/web-server-bundle ###
 
-###> romaricp ###
 .idea
 .docker/data/
 docker-compose.yml
-###< romaricp ###

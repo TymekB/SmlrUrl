@@ -51,7 +51,7 @@ class Updater
         $this->em->persist($shortUrl);
         $this->em->flush();
 
-        return true;
+        return $shortUrl;
     }
 
     public function update(ShortUrl $shortUrl, string $url)

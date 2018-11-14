@@ -37,7 +37,7 @@
                 contentType: "application/json; charset=utf-8",
                 success: function(data) {
 
-                    let shortUrl = location.href + data.urlId;
+                    let shortUrl = location.href + data.token;
 
                     $("#url").val(shortUrl);
                     $("#copy-btn").show();

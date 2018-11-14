@@ -22,7 +22,7 @@ class ShortUrl implements \JsonSerializable
     private $url;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="bigint")
      */
     private $token;
 

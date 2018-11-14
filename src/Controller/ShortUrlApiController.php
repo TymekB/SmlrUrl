@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Conversion\NumberConverter;
 use App\Entity\ShortUrl;
 use App\Repository\ShortUrlRepository;
 use App\Security\ShortUrlVoter;
@@ -26,12 +27,17 @@ class ShortUrlApiController extends AbstractController
      * @var Updater
      */
     private $shortUrlUpdater;
+    /**
+     * @var NumberConverter
+     */
+    private $converter;
 
-    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, Updater $shortUrlUpdater)
+    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, Updater $shortUrlUpdater, NumberConverter $converter)
     {
         $this->shortUrlRepository = $shortUrlRepository;
         $this->em = $em;
         $this->shortUrlUpdater = $shortUrlUpdater;
+        $this->converter = $converter;
     }
 
     public function read()
@@ -47,6 +53,9 @@ class ShortUrlApiController extends AbstractController
 
         $this->denyAccessUnlessGranted(ShortUrlVoter::VIEW, $shortUrl);
 
+        $token = $this->converter->encode($shortUrl->getToken(), NumberConverter::TOKEN);
+        $shortUrl->setToken($token);
+
         return $this->json($shortUrl);
     }
 
@@ -60,12 +69,11 @@ class ShortUrlApiController extends AbstractController
             return $this->json($result, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $token = substr(md5(microtime()),rand(0,26),4);
+        $randomNumber = mt_rand(100000, 999999);
 
-        $user = $this->getUser();
-        $this->shortUrlUpdater->create($data->url, $token, $user);
+        $shortUrl = $this->shortUrlUpdater->create($data->url, $randomNumber, $this->getUser());
 
-        $result['urlId'] = $token;
+        $result['token'] = $this->converter->encode($shortUrl->getToken(), NumberConverter::TOKEN);
         return $this->json($result, Response::HTTP_CREATED);
     }
 
