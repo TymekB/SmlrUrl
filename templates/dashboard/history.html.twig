@@ -6,21 +6,7 @@
             <h1>History</h1>
             <hr>
 
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>URL</th>
-                        <th>Short URL</th>
-                        <th>Token</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                    <tbody id="data">
-                    </tbody>
-            </table>
-
-            <div id="data2"></div>
+            <div id="data"></div>
         </div>
     </div>
 {% endblock %}
@@ -29,11 +15,10 @@
     {{ parent() }}
 
     <script>
-        $(document).ready(function(){
+        $(document).ready(function() {
             let shortUrl = new ShortUrl("#data");
 
             shortUrl.showAll();
         });
-
     </script>
 {% endblock %}

@@ -12,60 +12,79 @@ class ShortUrl
             url: '/api/short-url',
             success: function(data) {
 
-                let output = '';
+                if(data.length === 0) {
+                    $(_this.DOMElement).html("Data not found.");
+                    return;
+                }
+
+                let output = `
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>URL</th>
+                                <th>Short URL</th>
+                                <th>Token</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                `;
 
                 $.each(data, function(index, shortUrl) {
 
                     let link = window.location.host + "/" + shortUrl.token;
 
                     output += `
-                        <tr data-id="${shortUrl.id}">
-                        
-                            <td>${shortUrl.id}</td>
-                            <td>${shortUrl.url}</td>
-                            <td><a href="${link}">${link}</a></td>
-                            <td>${shortUrl.token}</td>
-                            <td>
-                                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-${shortUrl.id}">Edit</button>
-                                <button class="btn btn-danger btn-sm delete-action">Delete</button>
-                               
-
-                                <!-- Modal -->
-                                <div id="modal-${shortUrl.id}" class="modal fade" role="dialog">
-                                  <div class="modal-dialog">
-                                
-                                    <!-- Modal content-->
-                                    <div class="modal-content">
-                                          <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">Edit</h4>
-                                          </div>
-                                          
-                                          <div class="modal-body">
-                                               <div class="form-group">
-                                                    <label for="url-${shortUrl.id}"><b>URL:</b></label>
-                                                    <input type="text" class="form-control" id="url-${shortUrl.id}" value="${shortUrl.url}">
-                                               </div> 
-                                          </div>
-                                          
-                                          <div class="modal-footer">
-                                                <div class="pull-left">
-                                                    <button class="btn btn-primary update-action" data-id="${shortUrl.id}">Update</button>
-                                                </div>
-                                                
-                                                <div class="pull-right">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                </div>
-                                                <div class="clearfix"></div>
-                                          </div>
+                            <tr data-id="${shortUrl.id}">
+                            
+                                <td>${shortUrl.id}</td>
+                                <td>${shortUrl.url}</td>
+                                <td><a href="${link}">${link}</a></td>
+                                <td>${shortUrl.token}</td>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-${shortUrl.id}">Edit</button>
+                                    <button class="btn btn-danger btn-sm delete-action">Delete</button>
+                                   
+    
+                                    <!-- Modal -->
+                                    <div id="modal-${shortUrl.id}" class="modal fade" role="dialog">
+                                      <div class="modal-dialog">
+                                    
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                              <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Edit</h4>
+                                              </div>
+                                              
+                                              <div class="modal-body">
+                                                   <div class="form-group">
+                                                        <label for="url-${shortUrl.id}"><b>URL:</b></label>
+                                                        <input type="text" class="form-control" id="url-${shortUrl.id}" value="${shortUrl.url}">
+                                                   </div> 
+                                              </div>
+                                              
+                                              <div class="modal-footer">
+                                                    <div class="pull-left">
+                                                        <button class="btn btn-primary update-action" data-id="${shortUrl.id}">Update</button>
+                                                    </div>
+                                                    
+                                                    <div class="pull-right">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                              </div>
+                                        </div>
+                                      </div>
                                     </div>
-                                  </div>
-                                </div>
-                            </td>
-                        </tr>
-
+                                </td>
+                            </tr>
                 `;
                 });
+
+                output += `</table>`;
 
                 $(_this.DOMElement).html(output);
                 _this.init();
