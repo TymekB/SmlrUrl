@@ -39,8 +39,6 @@
 
                     let shortUrl = location.href + data.token;
 
-                    console.log(data.token);
-
                     $("#url").val(shortUrl);
                     $("#copy-btn").show();
 
@@ -52,8 +50,6 @@
                     });
                 },
                 error: function(data) {
-                    console.log(data);
-
                     $.toast({
                         heading: 'Error!',
                         text: 'Something went wrong. Check if your url is correct.',

@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use App\Conversion\NumberConverter;
+use App\Conversion\RandomNumber;
 use App\Entity\ShortUrl;
-use App\Entity\User;
 use App\Repository\ShortUrlRepository;
 use App\Security\ShortUrlVoter;
 use App\ShortUrl\Exception\ShortUrlDataNotFound;
@@ -30,21 +29,21 @@ class ShortUrlApiController extends AbstractController
      */
     private $shortUrlUpdater;
     /**
-     * @var NumberConverter
-     */
-    private $converter;
-    /**
      * @var ShortUrlTokenDecorator
      */
     private $shortUrlTokenDecorator;
+    /**
+     * @var RandomNumber
+     */
+    private $randomNumber;
 
-    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, Updater $shortUrlUpdater, NumberConverter $converter, ShortUrlTokenDecorator $shortUrlTokenDecorator)
+    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, Updater $shortUrlUpdater, ShortUrlTokenDecorator $shortUrlTokenDecorator, RandomNumber $randomNumber)
     {
         $this->shortUrlRepository = $shortUrlRepository;
         $this->em = $em;
         $this->shortUrlUpdater = $shortUrlUpdater;
-        $this->converter = $converter;
         $this->shortUrlTokenDecorator = $shortUrlTokenDecorator;
+        $this->randomNumber = $randomNumber;
     }
 
     public function read()
@@ -76,8 +75,8 @@ class ShortUrlApiController extends AbstractController
             return $this->json($result, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $randomNumber = mt_rand(10000000, 99999999);
-        $shortUrl = $this->shortUrlUpdater->create($data->url, $randomNumber, $this->getUser());
+        $rand = $this->randomNumber->generate();
+        $shortUrl = $this->shortUrlUpdater->create($data->url, $rand, $this->getUser());
 
         $this->shortUrlTokenDecorator->encodeToken($shortUrl);
         $result['token'] = $shortUrl->getToken();

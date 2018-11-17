@@ -25,18 +25,22 @@ class ShortUrlTokenDecorator
         $this->converter = $converter;
     }
 
-    public function encodeToken(ShortUrl $shortUrl)
+    public function encodeToken(ShortUrl $shortUrl, $system = NumberConverter::TOKEN)
     {
-        $token = $this->converter->encode($shortUrl->getToken(), NumberConverter::TOKEN);
+        $token = $this->converter->encode($shortUrl->getToken(), $system);
         $shortUrl->setToken($token);
+
+        return $shortUrl;
     }
 
-    public function encodeTokenFromCollection(Collection $shortUrlCollection)
+    public function encodeTokenFromCollection(Collection $shortUrlCollection, $system = NumberConverter::TOKEN)
     {
         foreach($shortUrlCollection as $shortUrl) {
-            $token = $this->converter->encode($shortUrl->getToken(), NumberConverter::TOKEN);
+            $token = $this->converter->encode($shortUrl->getToken(), $system);
             $shortUrl->setToken($token);
         }
+
+        return $shortUrlCollection;
     }
 
 }

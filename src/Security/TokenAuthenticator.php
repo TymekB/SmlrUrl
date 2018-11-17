@@ -9,8 +9,7 @@
 namespace App\Security;
 
 
-use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,13 +22,13 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     /**
-     * @var EntityManagerInterface
+     * @var UserRepository
      */
-    private $em;
+    private $userRepository;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->em = $em;
+        $this->userRepository = $userRepository;
     }
 
 
@@ -131,7 +130,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
            return;
        }
 
-       return $this->em->getRepository(User::class)->findOneBy(['apiToken' => $apiToken]);
+       return $this->userRepository->findOneBy(['apiToken' => $apiToken]);
     }
 
     /**

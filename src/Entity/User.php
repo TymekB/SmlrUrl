@@ -38,14 +38,14 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $apiToken;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\ShortUrl", mappedBy="user")
      */
     private $shortUrls;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $apiToken;
 
     public function __construct()
     {
@@ -89,18 +89,6 @@ class User implements UserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
-
-        return $this;
-    }
-
-    public function getApiToken(): ?string
-    {
-        return $this->apiToken;
-    }
-
-    public function setApiToken(string $apiToken): self
-    {
-        $this->apiToken = $apiToken;
 
         return $this;
     }
@@ -174,6 +162,18 @@ class User implements UserInterface
                 $shortUrl->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
 
         return $this;
     }

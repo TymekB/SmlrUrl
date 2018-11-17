@@ -6,6 +6,8 @@
 parameters:
     locale: 'en'
     api_token_length: 10
+    random_number_min: 1000000
+    random_number_max: 9999999
 
 services:
     # default configuration for services in *this* file
@@ -36,4 +38,9 @@ services:
             $length: '%api_token_length%'
 
     App\Conversion\NumberConverter:
+
+    App\Conversion\RandomNumber:
+        arguments:
+            $maxRange: '%random_number_max%'
+            $minRange: '%random_number_min%'
 

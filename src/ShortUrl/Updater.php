@@ -53,7 +53,7 @@ class Updater
         return $shortUrl;
     }
 
-    public function update(ShortUrl $shortUrl, string $url)
+    public function update(?ShortUrl $shortUrl, string $url)
     {
         if (!$shortUrl) {
             throw new ShortUrlNotFoundException();
@@ -83,7 +83,7 @@ class Updater
         return true;
     }
 
-    public function delete(ShortUrl $shortUrl)
+    public function delete(?ShortUrl $shortUrl)
     {
         if (!$shortUrl) {
             throw new ShortUrlNotFoundException();

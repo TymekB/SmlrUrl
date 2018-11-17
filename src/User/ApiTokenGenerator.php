@@ -8,7 +8,6 @@
 
 namespace App\User;
 
-
 use App\Entity\User;
 
 class ApiTokenGenerator
