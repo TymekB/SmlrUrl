@@ -34,3 +34,17 @@ App\Entity\User:
           max: 20
           minMessage: 'Password must be at least {{ limit }} characters long!'
           maxMessage: 'Password cannot be longer than {{ limit }} characters!'
+
+App\Entity\ApiToken:
+    properties:
+      description:
+        - NotBlank:
+            message: "Description cannot be empty!"
+        - Length:
+            min: 5
+            max: 30
+            minMessage: 'Api token must be at least {{ limit }} characters long!'
+            maxMessage: 'Api token cannot be longer than {{ limit }} characters!'
+        - Regex:
+            pattern: "/[a-zA-Z]+/"
+            message: "This value is not valid!"

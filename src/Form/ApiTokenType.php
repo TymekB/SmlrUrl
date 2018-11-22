@@ -19,7 +19,8 @@ class ApiTokenType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('description', TextType::class);
+        $builder
+            ->add('description', TextType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
