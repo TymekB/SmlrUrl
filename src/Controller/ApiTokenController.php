@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\ApiToken;
 use App\Repository\ApiTokenRepository;
+use App\Security\ApiTokenVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,11 +21,11 @@ class ApiTokenController extends AbstractController
     {
         $this->em = $em;
     }
-
-
+    
     public function switchActive($id)
     {
         $apiToken = $this->em->getRepository(ApiToken::class)->find($id);
+        $this->denyAccessUnlessGranted(ApiTokenVoter::EDIT, $apiToken);
 
         if(!$apiToken) {
             $this->createNotFoundException();
@@ -36,5 +37,10 @@ class ApiTokenController extends AbstractController
         $this->em->flush();
 
         return $this->redirectToRoute('api_key');
+    }
+
+    public function edit()
+    {
+        
     }
 }

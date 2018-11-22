@@ -2,22 +2,22 @@
 /**
  * Created by PhpStorm.
  * User: tymek
- * Date: 06.11.18
- * Time: 18:09
+ * Date: 22.11.18
+ * Time: 20:19
  */
 
 namespace App\Security;
 
 
-use App\Entity\ShortUrl;
+use App\Entity\ApiToken;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class ShortUrlVoter extends Voter
+class ApiTokenVoter extends Voter
 {
-     const VIEW = 'view';
-     const EDIT = 'edit';
+    const VIEW = 'view';
+    const EDIT = 'edit';
 
     /**
      * Determines if the attribute and subject are supported by this voter.
@@ -33,7 +33,7 @@ class ShortUrlVoter extends Voter
             return false;
         }
 
-        if(!($subject instanceof ShortUrl)) {
+        if(!($subject instanceof ApiToken)) {
             return false;
         }
 
@@ -58,26 +58,26 @@ class ShortUrlVoter extends Voter
             return false;
         }
 
-        /** @var ShortUrl $shortUrl */
-        $shortUrl = $subject;
+        /** @var ApiToken $shortUrl */
+        $apiToken = $subject;
 
         switch($attribute) {
             case self::VIEW:
-                return $this->canView($shortUrl, $user);
+                return $this->canView($apiToken, $user);
             case self::EDIT:
-                return $this->canEdit($shortUrl, $user);
+                return $this->canEdit($apiToken, $user);
         }
 
         return false;
     }
 
-    public function canView(ShortUrl $shortUrl, User $user)
+    public function canView(ApiToken $apiToken, User $user)
     {
-        return $this->canEdit($shortUrl, $user);
+        return $this->canEdit($apiToken, $user);
     }
 
-    public function canEdit(ShortUrl $shortUrl, User $user)
+    public function canEdit(ApiToken $apiToken, User $user)
     {
-        return $user === $shortUrl->getUser();
+        return $user === $apiToken->getUser();
     }
 }
