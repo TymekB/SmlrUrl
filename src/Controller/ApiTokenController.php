@@ -3,12 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\ApiToken;
-use App\Repository\ApiTokenRepository;
+use App\Form\ApiTokenType;
 use App\Security\ApiTokenVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 class ApiTokenController extends AbstractController
 {
@@ -27,10 +26,6 @@ class ApiTokenController extends AbstractController
         $apiToken = $this->em->getRepository(ApiToken::class)->find($id);
         $this->denyAccessUnlessGranted(ApiTokenVoter::EDIT, $apiToken);
 
-        if(!$apiToken) {
-            $this->createNotFoundException();
-        }
-
         $active = $apiToken->getActive();
         $apiToken->setActive(!$active);
 
@@ -39,8 +34,18 @@ class ApiTokenController extends AbstractController
         return $this->redirectToRoute('api_key');
     }
 
-    public function edit()
+    public function edit($id, Request $request)
     {
-        
+        $apiToken = $this->em->getRepository(ApiToken::class)->find($id);
+        $this->denyAccessUnlessGranted(ApiTokenVoter::EDIT, $apiToken);
+
+        $form = $this->createForm(ApiTokenType::class, $apiToken);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $this->em->flush();
+        }
+
+        return $this->render('api_token/edit.html.twig', ['form' => $form->createView()]);
     }
 }

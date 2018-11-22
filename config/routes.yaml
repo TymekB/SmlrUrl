@@ -25,6 +25,10 @@ api_key_switch:
     path: /api-key/switch/{id}
     controller: App\Controller\ApiTokenController::switchActive
 
+api_key_edit:
+    path: /api-key/edit/{id}
+    controller: App\Controller\ApiTokenController::edit
+
 redirect:
     path: /{token}
     controller: App\Controller\RedirectController::index
