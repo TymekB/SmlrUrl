@@ -5,6 +5,7 @@
         <div class="panel-body">
             {#<h1>Your api key: <code>{{ apiKey }}</code></h1>#}
             <h1>Your API Keys</h1>
+            <hr>
             <table class="table">
                 <thead>
                 <tr>
@@ -20,14 +21,21 @@
                         <td>{{ apiKey.token }}</td>
                         <td>{{ apiKey.description }}</td>
                         <td>{{ apiKey.expirationDate|date("m/d/Y") }}</td>
-                        <td><a href="#" class="btn btn-danger btn-sm">Turn on</a> <a href="#" class="btn btn-info btn-sm">Edit</a></td>
+                        <td>
+                            {% if apiKey.active %}
+                                <a href="{{ path('api_key_switch', {'id': apiKey.id}) }}" class="btn btn-danger btn-sm">Turn off</a>
+                            {% else %}
+                                <a href="{{ path('api_key_switch', {'id': apiKey.id}) }}" class="btn btn-success btn-sm">Turn on</a>
+                            {% endif %}
+                            <a href="#" class="btn btn-info btn-sm">Edit</a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
-            <hr>
-            API documentation <a href="#">click here</a>
         </div>
+
+        <div class="panel-footer">API documentation <a href="#">click here</a></div>
     </div>
 {% endblock %}
 

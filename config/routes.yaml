@@ -21,6 +21,10 @@ api_key:
     path: /api-key
     controller: App\Controller\DashboardController::apiKey
 
+api_key_switch:
+    path: /api-key/switch/{id}
+    controller: App\Controller\ApiTokenController::switchActive
+
 redirect:
     path: /{token}
     controller: App\Controller\RedirectController::index
@@ -49,3 +53,4 @@ api_short_url_delete:
     path: /api/short-url
     controller: App\Controller\ShortUrlApiController::delete
     methods: [DELETE]
+
