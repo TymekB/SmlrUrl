@@ -13,8 +13,8 @@ class DashboardController extends AbstractController
 
     public function apiKey()
     {
-        $apiKey = $this->getUser()->getApiToken();
+        $apiKeys = $this->getUser()->getApiTokens();
 
-        return $this->render('dashboard/api_key.html.twig', ['apiKey' => $apiKey]);
+        return $this->render('dashboard/api_key.html.twig', ['apiKeys' => $apiKeys]);
     }
 }

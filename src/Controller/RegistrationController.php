@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ApiToken;
 use App\Entity\User;
 use App\Form\UserType;
 use App\User\ApiTokenGenerator;
@@ -44,9 +45,13 @@ class RegistrationController extends AbstractController
             $password = $this->passwordEncoder->encodePassword($user, $user->getPassword());
 
             $user->setPassword($password);
-            $this->apiTokenGenerator->generate($user);
 
+            $apiToken = new ApiToken();
+            $this->apiTokenGenerator->generate($user, $apiToken);
+
+            $this->em->persist($apiToken);
             $this->em->persist($user);
+
             $this->em->flush();
 
             $this->addFlash('success', "You've been successfully registered! You can now sign in.");

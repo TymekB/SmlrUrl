@@ -43,13 +43,14 @@ class User implements UserInterface
     private $shortUrls;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToMany(targetEntity="App\Entity\ApiToken", mappedBy="user")
      */
-    private $apiToken;
+    private $apiTokens;
 
     public function __construct()
     {
         $this->shortUrls = new ArrayCollection();
+        $this->apiTokens = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -166,14 +167,33 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getApiToken(): ?string
+    /**
+     * @return Collection|ApiToken[]
+     */
+    public function getApiTokens(): Collection
     {
-        return $this->apiToken;
+        return $this->apiTokens;
     }
 
-    public function setApiToken(string $apiToken): self
+    public function addApiToken(ApiToken $apiToken): self
     {
-        $this->apiToken = $apiToken;
+        if (!$this->apiTokens->contains($apiToken)) {
+            $this->apiTokens[] = $apiToken;
+            $apiToken->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApiToken(ApiToken $apiToken): self
+    {
+        if ($this->apiTokens->contains($apiToken)) {
+            $this->apiTokens->removeElement($apiToken);
+            // set the owning side to null (unless already changed)
+            if ($apiToken->getUser() === $this) {
+                $apiToken->setUser(null);
+            }
+        }
 
         return $this;
     }

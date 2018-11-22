@@ -3,7 +3,28 @@
 {% block body %}
     <div class="panel panel-default">
         <div class="panel-body">
-            <h1>Your api key: <code>{{ apiKey }}</code></h1>
+            {#<h1>Your api key: <code>{{ apiKey }}</code></h1>#}
+            <h1>Your API Keys</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Token</th>
+                    <th>Description</th>
+                    <th>Expiration Date</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for apiKey in apiKeys %}
+                    <tr>
+                        <td>{{ apiKey.token }}</td>
+                        <td>{{ apiKey.description }}</td>
+                        <td>{{ apiKey.expirationDate|date("m/d/Y") }}</td>
+                        <td><a href="#" class="btn btn-danger btn-sm">Turn on</a> <a href="#" class="btn btn-info btn-sm">Edit</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
             <hr>
             API documentation <a href="#">click here</a>
         </div>

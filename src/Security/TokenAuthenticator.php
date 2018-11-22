@@ -9,7 +9,10 @@
 namespace App\Security;
 
 
+use App\Repository\ApiTokenRepository;
 use App\Repository\UserRepository;
+use App\Security\Exception\ApiTokenExpiredException;
+use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,13 +25,13 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     /**
-     * @var UserRepository
+     * @var ApiTokenRepository
      */
-    private $userRepository;
+    private $apiTokenRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(ApiTokenRepository $apiTokenRepository)
     {
-        $this->userRepository = $userRepository;
+        $this->apiTokenRepository = $apiTokenRepository;
     }
 
 
@@ -124,13 +127,23 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-       $apiToken = $credentials['token'];
+       $token = $credentials['token'];
 
-       if(!$apiToken) {
+       if(!$token) {
            return;
        }
 
-       return $this->userRepository->findOneBy(['apiToken' => $apiToken]);
+       $apiToken = $this->apiTokenRepository->findOneBy(['token' => $token, 'active' => true]);
+
+       if(!$apiToken) {
+           return null;
+       }
+
+       if(new DateTime() > $apiToken->getExpirationDate()) {
+            throw new ApiTokenExpiredException();
+       }
+
+       return $apiToken->getUser();
     }
 
     /**

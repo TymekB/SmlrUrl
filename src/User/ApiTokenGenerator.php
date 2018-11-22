@@ -8,7 +8,9 @@
 
 namespace App\User;
 
+use App\Entity\ApiToken;
 use App\Entity\User;
+use DateTime;
 
 class ApiTokenGenerator
 {
@@ -16,13 +18,18 @@ class ApiTokenGenerator
      * @var int
      */
     private $length;
+    /**
+     * @var string
+     */
+    private $intervalExpirationDate;
 
-    public function __construct($length = 10)
+    public function __construct($length = 10, $intervalExpirationDate = 'P3M')
     {
         $this->length = $length;
+        $this->intervalExpirationDate = $intervalExpirationDate;
     }
 
-    public function setLength(int $length)
+    public function setLength(int $length): self
     {
         $this->length = $length;
 
@@ -34,10 +41,29 @@ class ApiTokenGenerator
         return $this->length;
     }
 
-    public function generate(User $user): bool
+    public function setIntervalExpirationDate($intervalExpirationDate): self
     {
-        $token = bin2hex(random_bytes($this->length));
-        $user->setApiToken($token);
+        $this->intervalExpirationDate = $intervalExpirationDate;
+
+        return $this;
+    }
+
+    public function getIntervalExpirationDate(): string
+    {
+        return $this->getIntervalExpirationDate();
+    }
+
+    public function generate(User $user, ApiToken $apiToken, $description = 'default'): bool
+    {
+        $date = new DateTime();
+        $expirationDate = $date->add(new \DateInterval($this->intervalExpirationDate));
+
+        $apiToken->setToken(bin2hex(random_bytes($this->length)));
+        $apiToken->setUser($user);
+        $apiToken->setDescription($description);
+        $apiToken->setExpirationDate($expirationDate);
+
+        $user->addApiToken($apiToken);
 
         return true;
     }
