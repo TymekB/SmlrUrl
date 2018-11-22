@@ -40,7 +40,7 @@ class ApiToken
     /**
      * @ORM\Column(type="boolean")
      */
-    private $active;
+    private $active = true;
 
     public function getId(): ?int
     {

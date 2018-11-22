@@ -5,7 +5,7 @@
         <div class="panel-body">
             <h1>
                 Your API Keys
-                <a href="#" class="btn btn-primary">Generate new</a>
+                <a href="{{ path('api_key_create') }}" class="btn btn-primary">Generate new</a>
             </h1>
             <hr>
             <table class="table">
@@ -22,7 +22,7 @@
                     <tr>
                         <td>{{ apiKey.token }}</td>
                         <td>{{ apiKey.description }}</td>
-                        <td>{{ apiKey.expirationDate|date("m/d/Y") }}</td>
+                        <td>{{ apiKey.expirationDate|date("d/m/Y") }}</td>
                         <td>
                             {% if apiKey.active %}
                                 <a href="{{ path('api_key_switch', {'id': apiKey.id}) }}" class="btn btn-danger btn-sm">Turn off</a>
