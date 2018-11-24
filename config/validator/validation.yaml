@@ -41,10 +41,10 @@ App\Entity\ApiToken:
         - NotBlank:
             message: "Description cannot be empty!"
         - Length:
-            min: 5
-            max: 30
-            minMessage: 'Api token must be at least {{ limit }} characters long!'
-            maxMessage: 'Api token cannot be longer than {{ limit }} characters!'
+            min: 3
+            max: 150
+            minMessage: 'Description must be at least {{ limit }} characters long!'
+            maxMessage: 'Description cannot be longer than {{ limit }} characters!'
         - Regex:
             pattern: "/[a-zA-Z]+/"
             message: "This value is not valid!"

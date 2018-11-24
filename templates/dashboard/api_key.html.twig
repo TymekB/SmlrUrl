@@ -25,9 +25,9 @@
                         <td>{{ apiKey.expirationDate|date("d/m/Y") }}</td>
                         <td>
                             {% if apiKey.active %}
-                                <a href="{{ path('api_key_switch', {'id': apiKey.id}) }}" class="btn btn-danger btn-sm">Turn off</a>
+                                <a href="{{ path('api_key_switch', {'id': apiKey.id, 'option': 0}) }}" class="btn btn-danger btn-sm">Turn off</a>
                             {% else %}
-                                <a href="{{ path('api_key_switch', {'id': apiKey.id}) }}" class="btn btn-success btn-sm">Turn on</a>
+                                <a href="{{ path('api_key_switch', {'id': apiKey.id, 'option': 1}) }}" class="btn btn-success btn-sm">Turn on</a>
                             {% endif %}
                             <a href="{{ path('api_key_edit', {'id': apiKey.id}) }}" class="btn btn-info btn-sm">Edit</a>
                         </td>

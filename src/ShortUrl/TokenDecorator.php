@@ -13,7 +13,7 @@ use App\Conversion\NumberConverter;
 use App\Entity\ShortUrl;
 use Doctrine\Common\Collections\Collection;
 
-class ShortUrlTokenDecorator
+class TokenDecorator
 {
     /**
      * @var NumberConverter

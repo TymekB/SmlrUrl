@@ -50,9 +50,17 @@
                     });
                 },
                 error: function(data) {
+                    let output = `<ul>`;
+
+                    $(data.responseJSON.error_messages).each(function(index, message) {
+                        output += `<li>` + message + `</li>`;
+                    });
+
+                    output += `</ul>`;
+
                     $.toast({
                         heading: 'Error!',
-                        text: 'Something went wrong. Check if your url is correct.',
+                        text: output,
                         hideAfter: false,
                         icon: 'error'
                     });

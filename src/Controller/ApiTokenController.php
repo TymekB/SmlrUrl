@@ -2,10 +2,10 @@
 
 namespace App\Controller;
 
+use App\ApiToken\Updater;
 use App\Entity\ApiToken;
 use App\Form\ApiTokenType;
 use App\Security\ApiTokenVoter;
-use App\User\ApiTokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,44 +17,14 @@ class ApiTokenController extends AbstractController
      */
     private $em;
     /**
-     * @var ApiTokenGenerator
+     * @var Updater
      */
-    private $apiTokenGenerator;
+    private $updater;
 
-    public function __construct(EntityManagerInterface $em, ApiTokenGenerator $apiTokenGenerator)
+    public function __construct(EntityManagerInterface $em, Updater $updater)
     {
         $this->em = $em;
-        $this->apiTokenGenerator = $apiTokenGenerator;
-    }
-    
-    public function switchActive($id)
-    {
-        $apiToken = $this->em->getRepository(ApiToken::class)->find($id);
-        $this->denyAccessUnlessGranted(ApiTokenVoter::EDIT, $apiToken);
-
-        $active = $apiToken->getActive();
-        $apiToken->setActive(!$active);
-
-        $this->em->flush();
-
-        return $this->redirectToRoute('api_key');
-    }
-
-    public function edit($id, Request $request)
-    {
-        $apiToken = $this->em->getRepository(ApiToken::class)->find($id);
-        $this->denyAccessUnlessGranted(ApiTokenVoter::EDIT, $apiToken);
-
-        $form = $this->createForm(ApiTokenType::class, $apiToken);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-            $this->em->flush();
-
-            return $this->redirect('api_token');
-        }
-
-        return $this->render('api_token/edit.html.twig', ['form' => $form->createView()]);
+        $this->updater = $updater;
     }
 
     public function create(Request $request)
@@ -66,15 +36,56 @@ class ApiTokenController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()) {
 
-            $this->apiTokenGenerator->generate($this->getUser(), $apiToken, $form->get('description')->getData());
+            $user = $this->getUser();
+            $description = $form->get('description')->getData();
 
-            $this->em->persist($apiToken);
-            $this->em->flush();
+            $this->updater->create($user, $description);
 
             return $this->redirectToRoute('api_key');
         }
 
         return $this->render('api_token/create.html.twig', ['form' => $form->createView()]);
 
+    }
+
+    public function edit($id, Request $request)
+    {
+        /** @var ApiToken $apiToken */
+        $apiToken = $this->em->getRepository(ApiToken::class)->find($id);
+
+        if(!$apiToken) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted(ApiTokenVoter::EDIT, $apiToken);
+
+        $form = $this->createForm(ApiTokenType::class, $apiToken);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+
+            $this->updater->update($apiToken);
+
+            return $this->redirectToRoute('api_key');
+        }
+
+        return $this->render('api_token/edit.html.twig', ['form' => $form->createView()]);
+    }
+
+    public function switchActive($id, $option)
+    {
+        /** @var ApiToken $apiToken */
+        $apiToken = $this->em->getRepository(ApiToken::class)->find($id);
+
+        if(!$apiToken) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted(ApiTokenVoter::EDIT, $apiToken);
+
+        $apiToken->setActive((bool)$option);
+        $this->em->flush();
+
+        return $this->redirectToRoute('api_key');
     }
 }

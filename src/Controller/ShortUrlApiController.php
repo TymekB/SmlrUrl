@@ -2,13 +2,14 @@
 
 namespace App\Controller;
 
-use App\Conversion\RandomNumber;
 use App\Entity\ShortUrl;
 use App\Repository\ShortUrlRepository;
 use App\Security\ShortUrlVoter;
 use App\ShortUrl\Exception\ShortUrlDataNotFound;
-use App\ShortUrl\ShortUrlTokenDecorator;
+use App\ShortUrl\Exception\ShortUrlNotFoundException;
+use App\ShortUrl\TokenDecorator;
 use App\ShortUrl\Updater;
+use App\ShortUrl\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,21 +30,21 @@ class ShortUrlApiController extends AbstractController
      */
     private $shortUrlUpdater;
     /**
-     * @var ShortUrlTokenDecorator
+     * @var TokenDecorator
      */
     private $shortUrlTokenDecorator;
     /**
-     * @var RandomNumber
+     * @var Validator
      */
-    private $randomNumber;
+    private $validator;
 
-    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, Updater $shortUrlUpdater, ShortUrlTokenDecorator $shortUrlTokenDecorator, RandomNumber $randomNumber)
+    public function __construct(ShortUrlRepository $shortUrlRepository, EntityManagerInterface $em, Updater $shortUrlUpdater, TokenDecorator $shortUrlTokenDecorator, Validator $validator)
     {
         $this->shortUrlRepository = $shortUrlRepository;
         $this->em = $em;
         $this->shortUrlUpdater = $shortUrlUpdater;
         $this->shortUrlTokenDecorator = $shortUrlTokenDecorator;
-        $this->randomNumber = $randomNumber;
+        $this->validator = $validator;
     }
 
     public function read()
@@ -75,8 +76,7 @@ class ShortUrlApiController extends AbstractController
             return $this->json($result, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $rand = $this->randomNumber->generate();
-        $shortUrl = $this->shortUrlUpdater->create($data->url, $rand, $this->getUser());
+        $shortUrl = $this->shortUrlUpdater->create($this->getUser(), $data->url);
 
         $this->shortUrlTokenDecorator->encodeToken($shortUrl);
         $result['token'] = $shortUrl->getToken();
@@ -87,12 +87,17 @@ class ShortUrlApiController extends AbstractController
     public function update(Request $request, $id)
     {
         $data = json_decode($request->getContent());
+        /** @var ShortUrl $shortUrl */
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->find($id);
 
         if(!isset($data->url)) {
             throw new ShortUrlDataNotFound();
         }
 
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->find($id);
+        if(!$shortUrl) {
+            throw new ShortUrlNotFoundException();
+        }
+
         $this->denyAccessUnlessGranted(ShortUrlVoter::EDIT, $shortUrl);
 
         $this->shortUrlUpdater->update($shortUrl, $data->url);
@@ -103,12 +108,17 @@ class ShortUrlApiController extends AbstractController
     public function delete(Request $request)
     {
         $data = json_decode($request->getContent());
+        /** @var ShortUrl $shortUrl */
+        $shortUrl = $this->em->getRepository(ShortUrl::class)->find($data->id);
 
         if(!isset($data->id)) {
             throw new ShortUrlDataNotFound();
         }
 
-        $shortUrl = $this->em->getRepository(ShortUrl::class)->find($data->id);
+        if(!$shortUrl) {
+            throw new ShortUrlNotFoundException();
+        }
+
         $this->denyAccessUnlessGranted(ShortUrlVoter::EDIT, $shortUrl);
 
         $this->shortUrlUpdater->delete($shortUrl);

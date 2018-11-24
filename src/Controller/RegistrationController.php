@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\ApiToken\Updater;
 use App\Entity\ApiToken;
 use App\Entity\User;
 use App\Form\UserType;
@@ -22,15 +23,15 @@ class RegistrationController extends AbstractController
      */
     private $passwordEncoder;
     /**
-     * @var ApiTokenGenerator
+     * @var Updater
      */
-    private $apiTokenGenerator;
+    private $apiTokenUpdater;
 
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder, ApiTokenGenerator $apiTokenGenerator)
+    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder, Updater $apiTokenUpdater)
     {
         $this->em = $em;
         $this->passwordEncoder = $passwordEncoder;
-        $this->apiTokenGenerator = $apiTokenGenerator;
+        $this->apiTokenUpdater = $apiTokenUpdater;
     }
 
     public function register(Request $request)
@@ -43,16 +44,9 @@ class RegistrationController extends AbstractController
         if($form->isSubmitted() && $form->isValid()) {
 
             $password = $this->passwordEncoder->encodePassword($user, $user->getPassword());
-
             $user->setPassword($password);
 
-            $apiToken = new ApiToken();
-            $this->apiTokenGenerator->generate($user, $apiToken);
-
-            $this->em->persist($apiToken);
-            $this->em->persist($user);
-
-            $this->em->flush();
+            $this->apiTokenUpdater->create($user);
 
             $this->addFlash('success', "You've been successfully registered! You can now sign in.");
 

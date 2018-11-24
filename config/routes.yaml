@@ -22,11 +22,11 @@ api_key:
     controller: App\Controller\DashboardController::apiKey
 
 api_key_switch:
-    path: /api-key/switch/{id}
+    path: /api-key/{id}/switch/{option}
     controller: App\Controller\ApiTokenController::switchActive
 
 api_key_edit:
-    path: /api-key/edit/{id}
+    path: /api-key/{id}/edit
     controller: App\Controller\ApiTokenController::edit
 
 api_key_create:

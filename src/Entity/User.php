@@ -156,13 +156,8 @@ class User implements UserInterface
 
     public function removeShortUrl(ShortUrl $shortUrl): self
     {
-        if ($this->shortUrls->contains($shortUrl)) {
-            $this->shortUrls->removeElement($shortUrl);
-            // set the owning side to null (unless already changed)
-            if ($shortUrl->getUser() === $this) {
-                $shortUrl->setUser(null);
-            }
-        }
+        $this->shortUrls->removeElement($shortUrl);
+        $shortUrl->setUser(null);
 
         return $this;
     }
@@ -187,13 +182,8 @@ class User implements UserInterface
 
     public function removeApiToken(ApiToken $apiToken): self
     {
-        if ($this->apiTokens->contains($apiToken)) {
-            $this->apiTokens->removeElement($apiToken);
-            // set the owning side to null (unless already changed)
-            if ($apiToken->getUser() === $this) {
-                $apiToken->setUser(null);
-            }
-        }
+        $this->apiTokens->removeElement($apiToken);
+        $apiToken->setUser(null);
 
         return $this;
     }

@@ -9,12 +9,10 @@
 namespace App\ShortUrl;
 
 
+use App\Conversion\RandomNumber;
 use App\Entity\ShortUrl;
 use App\Entity\User;
-use App\ShortUrl\Exception\ShortUrlIsNotValidException;
-use App\ShortUrl\Exception\ShortUrlNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Updater
 {
@@ -23,29 +21,29 @@ class Updater
      */
     private $em;
     /**
-     * @var ValidatorInterface
+     * @var Validator
      */
     private $validator;
+    /**
+     * @var RandomNumber
+     */
+    private $randomNumber;
 
-    public function __construct(EntityManagerInterface $em, ValidatorInterface $validator)
+    public function __construct(EntityManagerInterface $em, Validator $validator, RandomNumber $randomNumber)
     {
         $this->em = $em;
         $this->validator = $validator;
+        $this->randomNumber = $randomNumber;
     }
 
-    public function create($url, $token, ?User $user)
+    public function create(?User $user, string $url)
     {
         $shortUrl = new ShortUrl();
         $shortUrl->setUrl($url);
-        $shortUrl->setToken($token);
+        $shortUrl->setToken($this->randomNumber->generate());
         $shortUrl->setUser($user);
 
-
-        $errors = $this->validator->validate($shortUrl);
-
-        if (count($errors) > 0) {
-            throw new ShortUrlIsNotValidException($errors);
-        }
+        $this->validator->validate($shortUrl);
 
         $this->em->persist($shortUrl);
         $this->em->flush();
@@ -53,42 +51,19 @@ class Updater
         return $shortUrl;
     }
 
-    public function update(?ShortUrl $shortUrl, string $url)
+    public function update(ShortUrl $shortUrl, string $url)
     {
-        if (!$shortUrl) {
-            throw new ShortUrlNotFoundException();
-        }
-
         $shortUrl->setUrl($url);
 
-        $errors = $this->validator->validate($shortUrl);
-
-        if (count($errors) > 0) {
-
-            $msg = "";
-            foreach($errors as $key => $error) {
-
-                $msg.= $error->getMessage();
-
-                if($key > 0) {
-                    $msg.= ",";
-                }
-            }
-
-            throw new ShortUrlIsNotValidException($msg);
-        }
+        $this->validator->validate($shortUrl);
 
         $this->em->flush();
 
         return true;
     }
 
-    public function delete(?ShortUrl $shortUrl)
+    public function delete(ShortUrl $shortUrl)
     {
-        if (!$shortUrl) {
-            throw new ShortUrlNotFoundException();
-        }
-
         $this->em->remove($shortUrl);
         $this->em->flush();
 
