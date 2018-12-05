@@ -27,7 +27,13 @@ class Updater
      */
     private $intervalExpirationDate;
 
-    public function __construct(EntityManagerInterface $em, Generator $generator, $intervalExpirationDate = 'P3M')
+    /**
+     * Updater constructor.
+     * @param EntityManagerInterface $em
+     * @param Generator $generator
+     * @param string $intervalExpirationDate
+     */
+    public function __construct(EntityManagerInterface $em, Generator $generator, string $intervalExpirationDate = 'P3M')
     {
         $this->em = $em;
         $this->generator = $generator;
@@ -41,6 +47,12 @@ class Updater
         return $this;
     }
 
+    /**
+     * @param User $user
+     * @param string $description
+     * @return bool
+     * @throws \Exception
+     */
     public function create(User $user, $description = 'default'): bool
     {
         $date = new \DateTime();
@@ -61,6 +73,11 @@ class Updater
         return true;
     }
 
+    /**
+     * @param ApiToken $apiToken
+     * @param string|null $description
+     * @return bool
+     */
     public function update(ApiToken $apiToken, string $description = null): bool
     {
         if($description) {
@@ -73,6 +90,10 @@ class Updater
         return true;
     }
 
+    /**
+     * @param ApiToken $apiToken
+     * @return bool
+     */
     public function delete(ApiToken $apiToken): bool
     {
         $this->em->remove($apiToken);

@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection ReturnTypeCanBeDeclaredInspection */
+
 /**
  * Created by PhpStorm.
  * User: tymek
@@ -17,13 +18,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ApiTokenType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('description', TextType::class);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'data_class' => ApiToken::class,

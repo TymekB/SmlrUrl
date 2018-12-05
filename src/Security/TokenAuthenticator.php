@@ -57,7 +57,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return Response
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
         $data = [
             'message' => 'Authentication Required'
@@ -75,7 +75,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return bool
      */
-    public function supports(Request $request)
+    public function supports(Request $request): bool
     {
         return $request->headers->has('X-AUTH-TOKEN');
     }
@@ -125,7 +125,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return UserInterface|null
      */
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
     {
        $token = $credentials['token'];
 
@@ -162,7 +162,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @throws AuthenticationException
      */
-    public function checkCredentials($credentials, UserInterface $user)
+    public function checkCredentials($credentials, UserInterface $user): bool
     {
         return true;
     }
@@ -181,7 +181,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return Response|null
      */
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): JsonResponse
     {
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
@@ -205,7 +205,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return Response|null
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
         return null;
     }
@@ -224,7 +224,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      *
      * @return bool
      */
-    public function supportsRememberMe()
+    public function supportsRememberMe(): bool
     {
         return false;
     }

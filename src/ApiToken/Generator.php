@@ -16,7 +16,11 @@ class Generator
      */
     private $length;
 
-    public function __construct($length = 10)
+    /**
+     * Generator constructor.
+     * @param int $length
+     */
+    public function __construct(int $length = 10)
     {
         $this->length = $length;
     }
@@ -31,6 +35,10 @@ class Generator
         return $this;
     }
 
+    /**
+     * @return string
+     * @throws \Exception
+     */
     public function generate(): string
     {
         return bin2hex(random_bytes($this->length));

@@ -1,23 +1,20 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: root
- * Date: 04.11.18
- * Time: 14:03
+ * User: tymek
+ * Date: 02.12.18
+ * Time: 20:31
  */
 
 namespace App\EventSubscriber;
 
-
-use App\ShortUrl\Exception\ShortUrlDataNotFound;
-use App\ShortUrl\Exception\ShortUrlIsNotValidException;
-use App\ShortUrl\Exception\ShortUrlNotFoundException;
+use App\ApiToken\Exception\ApiTokenNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class ShortUrlExceptionSubscriber implements EventSubscriberInterface
+class ApiTokenExceptionSubscriber implements EventSubscriberInterface
 {
 
     /**
@@ -54,32 +51,9 @@ class ShortUrlExceptionSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getException();
 
-        if($exception instanceof ShortUrlNotFoundException || $exception instanceof ShortUrlDataNotFound) {
-
-            $response = new JsonResponse(
-                [
-                    'success' => false,
-                    'message' => $exception->getMessage()
-                ]
-            );
-            $response->setStatusCode(JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
-
-            $event->setResponse($response);
-        }
-
-        if($exception instanceof ShortUrlIsNotValidException) {
-
-            $errorMessages = explode(',', $exception->getMessage());
-
-            $response = new JsonResponse(
-                [
-                    'success' => false,
-                    'error_messages' => $errorMessages
-                ]
-            );
-            $response->setStatusCode(JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
-
-            $event->setResponse($response);
+        if($exception instanceof ApiTokenNotFoundException) {
+            $notFoundException = new NotFoundHttpException($exception->getMessage());
+            $event->setException($notFoundException);
         }
     }
 }

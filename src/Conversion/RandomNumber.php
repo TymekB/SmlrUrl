@@ -17,6 +17,11 @@ class RandomNumber
      */
     private $minRange;
 
+    /**
+     * RandomNumber constructor.
+     * @param $maxRange
+     * @param int $minRange
+     */
     public function __construct($maxRange, $minRange = 0)
     {
 
@@ -24,31 +29,48 @@ class RandomNumber
         $this->minRange = $minRange;
     }
 
-    public function setMinRange($minRange)
+    /**
+     * @param $minRange
+     * @return $this
+     */
+    public function setMinRange($minRange): self
     {
         $this->minRange = $minRange;
 
         return $this;
     }
 
-    public function setMaxRange($maxRange)
+    /**
+     * @param $maxRange
+     * @return $this
+     */
+    public function setMaxRange($maxRange): self
     {
         $this->maxRange = $maxRange;
 
         return $this;
     }
 
-    public function getMinRange()
+    /**
+     * @return int
+     */
+    public function getMinRange(): int
     {
         return $this->minRange;
     }
 
-    public function getMaxRange()
+    /**
+     * @return int
+     */
+    public function getMaxRange(): int
     {
         return $this->maxRange;
     }
 
-    public function generate()
+    /**
+     * @return int
+     */
+    public function generate(): int
     {
         return mt_rand($this->minRange, $this->maxRange);
     }

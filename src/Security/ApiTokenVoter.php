@@ -16,8 +16,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ApiTokenVoter extends Voter
 {
-    const VIEW = 'view';
-    const EDIT = 'edit';
+    public const VIEW = 'view';
+    public const EDIT = 'edit';
 
     /**
      * Determines if the attribute and subject are supported by this voter.
@@ -27,9 +27,9 @@ class ApiTokenVoter extends Voter
      *
      * @return bool True if the attribute and subject are supported, false otherwise
      */
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
-        if(!in_array($attribute, [self::VIEW, self::EDIT])) {
+        if(!in_array($attribute, [self::VIEW, self::EDIT], true)) {
             return false;
         }
 
@@ -50,7 +50,7 @@ class ApiTokenVoter extends Voter
      *
      * @return bool
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token):bool
     {
         $user = $token->getUser();
 
@@ -71,12 +71,22 @@ class ApiTokenVoter extends Voter
         return false;
     }
 
-    public function canView(ApiToken $apiToken, User $user)
+    /**
+     * @param ApiToken $apiToken
+     * @param User $user
+     * @return bool
+     */
+    public function canView(ApiToken $apiToken, User $user): bool
     {
         return $this->canEdit($apiToken, $user);
     }
 
-    public function canEdit(ApiToken $apiToken, User $user)
+    /**
+     * @param ApiToken $apiToken
+     * @param User $user
+     * @return bool
+     */
+    public function canEdit(ApiToken $apiToken, User $user): bool
     {
         return $user === $apiToken->getUser();
     }

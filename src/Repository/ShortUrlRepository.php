@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\ShortUrl;
 use App\Entity\User;
+use App\ShortUrl\Exception\ShortUrlNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -15,6 +16,22 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class ShortUrlRepository extends ServiceEntityRepository
 {
+    /**
+     * @param $id
+     * @return ShortUrl
+     * @throws ShortUrlNotFoundException
+     */
+    public function getOneById($id): ShortUrl
+    {
+        $shortUrl = $this->find($id);
+
+        if(!$shortUrl) {
+            throw new ShortUrlNotFoundException();
+        }
+
+        return $shortUrl;
+    }
+
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, ShortUrl::class);

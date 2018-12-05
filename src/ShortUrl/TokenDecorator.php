@@ -20,12 +20,21 @@ class TokenDecorator
      */
     private $converter;
 
+    /**
+     * TokenDecorator constructor.
+     * @param NumberConverter $converter
+     */
     public function __construct(NumberConverter $converter)
     {
         $this->converter = $converter;
     }
 
-    public function encodeToken(ShortUrl $shortUrl, $system = NumberConverter::TOKEN)
+    /**
+     * @param ShortUrl $shortUrl
+     * @param string $system
+     * @return ShortUrl
+     */
+    public function encodeToken(ShortUrl $shortUrl, $system = NumberConverter::TOKEN): ShortUrl
     {
         $token = $this->converter->encode($shortUrl->getToken(), $system);
         $shortUrl->setToken($token);
@@ -33,7 +42,12 @@ class TokenDecorator
         return $shortUrl;
     }
 
-    public function encodeTokenFromCollection(Collection $shortUrlCollection, $system = NumberConverter::TOKEN)
+    /**
+     * @param Collection $shortUrlCollection
+     * @param string $system
+     * @return Collection
+     */
+    public function encodeTokenFromCollection(Collection $shortUrlCollection, $system = NumberConverter::TOKEN): Collection
     {
         foreach($shortUrlCollection as $shortUrl) {
             $token = $this->converter->encode($shortUrl->getToken(), $system);

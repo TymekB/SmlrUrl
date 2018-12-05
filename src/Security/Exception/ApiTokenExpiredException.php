@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class ApiTokenExpiredException extends AuthenticationException
 {
-    public function getMessageKey()
+    public function getMessageKey(): string
     {
         return 'Your token has expired.';
     }

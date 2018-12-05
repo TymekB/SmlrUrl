@@ -20,23 +20,32 @@ class Validator
      */
     private $validator;
 
+    /**
+     * Validator constructor.
+     * @param ValidatorInterface $validator
+     */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }
 
+    /**
+     * @param ShortUrl $shortUrl
+     * @return bool
+     * @throws ShortUrlIsNotValidException
+     */
     public function validate(ShortUrl $shortUrl): bool
     {
         $errors = $this->validator->validate($shortUrl);
 
         if (count($errors) > 0) {
-            $msg = "";
+            $msg = '';
             foreach($errors as $key => $error) {
 
                 $msg.= $error->getMessage();
 
                 if($key > 0) {
-                    $msg.= ",";
+                    $msg.= ',';
                 }
             }
 

@@ -6,18 +6,15 @@ use App\ApiToken\Updater;
 use App\Entity\ApiToken;
 use App\Entity\User;
 use App\Form\UserType;
-use App\User\ApiTokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
+use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class RegistrationController extends AbstractController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
     /**
      * @var UserPasswordEncoderInterface
      */
@@ -27,9 +24,8 @@ class RegistrationController extends AbstractController
      */
     private $apiTokenUpdater;
 
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder, Updater $apiTokenUpdater)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, Updater $apiTokenUpdater)
     {
-        $this->em = $em;
         $this->passwordEncoder = $passwordEncoder;
         $this->apiTokenUpdater = $apiTokenUpdater;
     }

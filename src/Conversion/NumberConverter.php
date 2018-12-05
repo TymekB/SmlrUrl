@@ -11,12 +11,17 @@ namespace App\Conversion;
 
 class NumberConverter
 {
-    const BINARY = '01';
-    const HEX = '0123456789ABCDEF';
-    const OCTAL = '012345678';
-    const TOKEN = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    public const BINARY = '01';
+    public const HEX = '0123456789ABCDEF';
+    public const OCTAL = '012345678';
+    public const TOKEN = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    public function encode($number, $system)
+    /**
+     * @param int $number
+     * @param string $system
+     * @return string
+     */
+    public function encode(int $number, string $system): string
     {
         $base = strlen($system);
         $encodedValue = '';
@@ -32,15 +37,20 @@ class NumberConverter
         return $encodedValue;
     }
 
-    public function decode($value, $system)
+    /**
+     * @param int $value
+     * @param string $system
+     * @return int
+     */
+    public function decode(int $value, string $system): int
     {
         $base = strlen($system);
         $systemArr = array_flip(str_split($system));
         $sum = 0;
 
-        for($i=0; $i < strlen($value); $i++) {
+        for($i=0, $iMax = strlen($value); $i < $iMax; $i++) {
 
-            $sum += $systemArr[$value[$i]] * pow($base, strlen($value)-$i-1);
+            $sum += $systemArr[$value[$i]] * ($base ** (strlen($value) - $i - 1));
         }
 
         return $sum;

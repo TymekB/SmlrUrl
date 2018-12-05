@@ -8,7 +8,9 @@ use App\Form\ApiTokenType;
 use App\Security\ApiTokenVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiTokenController extends AbstractController
 {
@@ -21,13 +23,23 @@ class ApiTokenController extends AbstractController
      */
     private $updater;
 
+    /**
+     * ApiTokenController constructor.
+     * @param EntityManagerInterface $em
+     * @param Updater $updater
+     */
     public function __construct(EntityManagerInterface $em, Updater $updater)
     {
         $this->em = $em;
         $this->updater = $updater;
     }
 
-    public function create(Request $request)
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function create(Request $request): Response
     {
         $apiToken = new ApiToken();
 
@@ -48,14 +60,15 @@ class ApiTokenController extends AbstractController
 
     }
 
-    public function edit($id, Request $request)
+    /**
+     * @param $id
+     * @param Request $request
+     * @return Response
+     */
+    public function edit($id, Request $request): Response
     {
         /** @var ApiToken $apiToken */
-        $apiToken = $this->em->getRepository(ApiToken::class)->find($id);
-
-        if(!$apiToken) {
-            throw $this->createNotFoundException();
-        }
+        $apiToken = $this->em->getRepository(ApiToken::class)->getOneById($id);
 
         $this->denyAccessUnlessGranted(ApiTokenVoter::EDIT, $apiToken);
 
@@ -72,14 +85,15 @@ class ApiTokenController extends AbstractController
         return $this->render('api_token/edit.html.twig', ['form' => $form->createView()]);
     }
 
-    public function switchActive($id, $option)
+    /**
+     * @param $id
+     * @param $option
+     * @return RedirectResponse
+     */
+    public function switchActive($id, $option): RedirectResponse
     {
         /** @var ApiToken $apiToken */
-        $apiToken = $this->em->getRepository(ApiToken::class)->find($id);
-
-        if(!$apiToken) {
-            throw $this->createNotFoundException();
-        }
+        $apiToken = $this->em->getRepository(ApiToken::class)->getOneById($id);
 
         $this->denyAccessUnlessGranted(ApiTokenVoter::EDIT, $apiToken);
 

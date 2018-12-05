@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\ApiToken\Exception\ApiTokenNotFoundException;
 use App\Entity\ApiToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -17,6 +18,22 @@ class ApiTokenRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, ApiToken::class);
+    }
+
+    /**
+     * @param $id
+     * @return ApiToken|null
+     * @throws ApiTokenNotFoundException
+     */
+    public function getOneById($id): ApiToken
+    {
+        $apiToken = $this->find($id);
+
+        if(!$apiToken) {
+            throw new ApiTokenNotFoundException();
+        }
+
+        return $apiToken;
     }
 
 //    /**

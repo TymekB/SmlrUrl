@@ -29,6 +29,12 @@ class Updater
      */
     private $randomNumber;
 
+    /**
+     * Updater constructor.
+     * @param EntityManagerInterface $em
+     * @param Validator $validator
+     * @param RandomNumber $randomNumber
+     */
     public function __construct(EntityManagerInterface $em, Validator $validator, RandomNumber $randomNumber)
     {
         $this->em = $em;
@@ -36,7 +42,13 @@ class Updater
         $this->randomNumber = $randomNumber;
     }
 
-    public function create(?User $user, string $url)
+    /**
+     * @param User|null $user
+     * @param string $url
+     * @return ShortUrl
+     * @throws Exception\ShortUrlIsNotValidException
+     */
+    public function create(?User $user, string $url): ShortUrl
     {
         $shortUrl = new ShortUrl();
         $shortUrl->setUrl($url);
@@ -51,7 +63,13 @@ class Updater
         return $shortUrl;
     }
 
-    public function update(ShortUrl $shortUrl, string $url)
+    /**
+     * @param ShortUrl $shortUrl
+     * @param string $url
+     * @return bool
+     * @throws Exception\ShortUrlIsNotValidException
+     */
+    public function update(ShortUrl $shortUrl, string $url): bool
     {
         $shortUrl->setUrl($url);
 
@@ -62,7 +80,11 @@ class Updater
         return true;
     }
 
-    public function delete(ShortUrl $shortUrl)
+    /**
+     * @param ShortUrl $shortUrl
+     * @return bool
+     */
+    public function delete(ShortUrl $shortUrl): bool
     {
         $this->em->remove($shortUrl);
         $this->em->flush();
