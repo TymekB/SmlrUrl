@@ -8,6 +8,7 @@
 
 namespace App\ApiToken;
 
+use App\Dto\ApiTokenDto;
 use App\Entity\ApiToken;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,23 +49,22 @@ class Updater
     }
 
     /**
-     * @param User $user
-     * @param string $description
+     * @param ApiTokenDto $apiTokenDto
      * @return bool
      * @throws \Exception
      */
-    public function create(User $user, $description = 'default'): bool
+    public function create(ApiTokenDto $apiTokenDto): bool
     {
         $date = new \DateTime();
         $expirationDate = $date->add(new \DateInterval($this->intervalExpirationDate));
 
-        $apiToken = new ApiToken();
-        $apiToken->setUser($user);
-        $apiToken->setToken($this->generator->generate());
-        $apiToken->setDescription($description);
-        $apiToken->setExpirationDate($expirationDate);
+        $apiTokenDto->setToken($this->generator->generate());
+        $apiTokenDto->setExpirationDate($expirationDate);
 
-        $user->addApiToken($apiToken);
+        $user = $apiTokenDto->getUser();
+        $user->addApiToken($apiTokenDto);
+
+        $apiToken = ApiToken::createFromDto($apiTokenDto);
 
         $this->em->persist($apiToken);
         $this->em->persist($user);

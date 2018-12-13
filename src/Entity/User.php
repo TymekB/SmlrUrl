@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Dto\ApiTokenDto;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -163,6 +164,8 @@ class User implements UserInterface
                 $shortUrl->setUser(null);
             }
         }
+
+        return $this;
     }
 
     /**
@@ -173,11 +176,17 @@ class User implements UserInterface
         return $this->apiTokens;
     }
 
-    public function addApiToken(ApiToken $apiToken): self
+    /**
+     * @param ApiTokenDto $apiTokenDto
+     * @return User
+     */
+    public function addApiToken(ApiTokenDto $apiTokenDto): self
     {
+        $apiToken = ApiToken::createFromDto($apiTokenDto);
+
         if (!$this->apiTokens->contains($apiToken)) {
             $this->apiTokens[] = $apiToken;
-            $apiToken->setUser($this);
+            $apiTokenDto->setUser($this);
         }
 
         return $this;

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\ApiToken\Exception\ApiTokenNotFoundException;
+use App\Dto\ApiTokenDto;
 use App\Entity\ApiToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;

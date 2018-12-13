@@ -130,7 +130,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
        $token = $credentials['token'];
 
        if(!$token) {
-           return;
+           return null;
        }
 
        $apiToken = $this->apiTokenRepository->findOneBy(['token' => $token, 'active' => true]);

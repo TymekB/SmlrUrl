@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\ApiToken\Updater;
+use App\Dto\ApiTokenDto;
 use App\Entity\ApiToken;
 use App\Form\ApiTokenType;
 use App\Security\ApiTokenVoter;
@@ -41,17 +42,15 @@ class ApiTokenController extends AbstractController
      */
     public function create(Request $request): Response
     {
-        $apiToken = new ApiToken();
+        $apiTokenDto = new ApiTokenDto();
 
-        $form = $this->createForm(ApiTokenType::class, $apiToken);
+        $form = $this->createForm(ApiTokenType::class, $apiTokenDto);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
 
-            $user = $this->getUser();
-            $description = $form->get('description')->getData();
-
-            $this->updater->create($user, $description);
+            $apiTokenDto->setUser($this->getUser());
+            $this->updater->create($apiTokenDto);
 
             return $this->redirectToRoute('api_key');
         }

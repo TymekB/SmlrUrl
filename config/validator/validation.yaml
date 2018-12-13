@@ -35,7 +35,7 @@ App\Entity\User:
           minMessage: 'Password must be at least {{ limit }} characters long!'
           maxMessage: 'Password cannot be longer than {{ limit }} characters!'
 
-App\Entity\ApiToken:
+App\Dto\ApiTokenDto:
     properties:
       description:
         - NotBlank:
