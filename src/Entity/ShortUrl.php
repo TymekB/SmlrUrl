@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Dto\ShortUrlDto;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -72,6 +73,31 @@ class ShortUrl implements \JsonSerializable
         return $this;
     }
 
+    public static function createFromDto(ShortUrlDto $dto): self
+    {
+        $shortUrl = new self();
+        $shortUrl->setUrl($dto->getUrl());
+        $shortUrl->setToken($dto->getToken());
+        $shortUrl->setUser($dto->getUser());
+
+        return $shortUrl;
+    }
+
+    public function updateFromDto(ShortUrlDto $dto): void
+    {
+        if($dto->getUser()) {
+            $this->setUser($dto->getUser());
+        }
+
+        if($dto->getToken()) {
+            $this->setToken($dto->getToken());
+        }
+
+        if($dto->getUrl()) {
+            $this->setUrl($dto->getUrl());
+        }
+    }
+
     /**
      * Specify data which should be serialized to JSON
      * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -81,6 +107,6 @@ class ShortUrl implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return ["id" => $this->getId(), "url" => $this->getUrL(), "token" => $this->getToken()];
+        return ['id' => $this->getId(), 'url' => $this->getUrl(), 'token' => $this->getToken()];
     }
 }

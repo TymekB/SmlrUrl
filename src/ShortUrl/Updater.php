@@ -10,6 +10,7 @@ namespace App\ShortUrl;
 
 
 use App\Conversion\RandomNumber;
+use App\Dto\ShortUrlDto;
 use App\Entity\ShortUrl;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,20 +44,16 @@ class Updater
     }
 
     /**
-     * @param User|null $user
-     * @param string $url
+     * @param ShortUrlDto $shortUrlDto
      * @return ShortUrl
      * @throws Exception\ShortUrlIsNotValidException
      */
-    public function create(?User $user, string $url): ShortUrl
+    public function create(ShortUrlDto $shortUrlDto): ShortUrl
     {
-        $shortUrl = new ShortUrl();
-        $shortUrl->setUrl($url);
-        $shortUrl->setToken($this->randomNumber->generate());
-        $shortUrl->setUser($user);
+        $shortUrlDto->setToken($this->randomNumber->generate());
+        $this->validator->validate($shortUrlDto);
 
-        $this->validator->validate($shortUrl);
-
+        $shortUrl = ShortUrl::createFromDto($shortUrlDto);
         $this->em->persist($shortUrl);
         $this->em->flush();
 
@@ -65,16 +62,16 @@ class Updater
 
     /**
      * @param ShortUrl $shortUrl
-     * @param string $url
+     * @param ShortUrlDto $shortUrlDto
      * @return bool
      * @throws Exception\ShortUrlIsNotValidException
      */
-    public function update(ShortUrl $shortUrl, string $url): bool
+    public function update(ShortUrl $shortUrl, ShortUrlDto $shortUrlDto): bool
     {
-        $shortUrl->setUrl($url);
+        $this->validator->validate($shortUrlDto);
+        $shortUrl->updateFromDto($shortUrlDto);
 
-        $this->validator->validate($shortUrl);
-
+        $this->em->persist($shortUrl);
         $this->em->flush();
 
         return true;

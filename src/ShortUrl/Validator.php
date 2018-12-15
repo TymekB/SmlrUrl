@@ -9,6 +9,7 @@
 namespace App\ShortUrl;
 
 
+use App\Dto\ShortUrlDto;
 use App\Entity\ShortUrl;
 use App\ShortUrl\Exception\ShortUrlIsNotValidException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -30,11 +31,11 @@ class Validator
     }
 
     /**
-     * @param ShortUrl $shortUrl
+     * @param ShortUrlDto $shortUrl
      * @return bool
      * @throws ShortUrlIsNotValidException
      */
-    public function validate(ShortUrl $shortUrl): bool
+    public function validate(ShortUrlDto $shortUrl): bool
     {
         $errors = $this->validator->validate($shortUrl);
 

@@ -1,4 +1,4 @@
-App\Entity\ShortUrl:
+App\Entity\ShortUrlDto:
     constraints:
       - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: token
     properties:

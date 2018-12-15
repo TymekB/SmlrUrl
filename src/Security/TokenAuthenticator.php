@@ -122,6 +122,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      * @param UserProviderInterface $userProvider
      *
      * @throws AuthenticationException
+     * @throws \Exception
      *
      * @return UserInterface|null
      */
@@ -130,7 +131,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
        $token = $credentials['token'];
 
        if(!$token) {
-           return;
+           return null;
        }
 
        $apiToken = $this->apiTokenRepository->findOneBy(['token' => $token, 'active' => true]);

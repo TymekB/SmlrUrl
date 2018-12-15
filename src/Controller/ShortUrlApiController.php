@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Dto\ShortUrlDto;
 use App\Entity\ShortUrl;
 use App\Repository\ShortUrlRepository;
 use App\Security\ShortUrlVoter;
@@ -79,6 +80,7 @@ class ShortUrlApiController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      * @throws ShortUrlDataNotFound
+     * @throws \App\ShortUrl\Exception\ShortUrlIsNotValidException
      */
     public function create(Request $request): JsonResponse
     {
@@ -89,7 +91,10 @@ class ShortUrlApiController extends AbstractController
             throw new ShortUrlDataNotFound();
         }
 
-        $shortUrl = $this->shortUrlUpdater->create($this->getUser(), $data->url);
+        $shortUrlDto = new ShortUrlDto();
+        $shortUrlDto->setUrl($data->url)->setUser($this->getUser());
+
+        $shortUrl = $this->shortUrlUpdater->create($shortUrlDto);
 
         $this->shortUrlTokenDecorator->encodeToken($shortUrl);
         $result['token'] = $shortUrl->getToken();
@@ -102,6 +107,7 @@ class ShortUrlApiController extends AbstractController
      * @param $id
      * @return JsonResponse
      * @throws ShortUrlDataNotFound
+     * @throws \App\ShortUrl\Exception\ShortUrlIsNotValidException
      */
     public function update(Request $request, $id): JsonResponse
     {
@@ -115,7 +121,10 @@ class ShortUrlApiController extends AbstractController
 
         $this->denyAccessUnlessGranted(ShortUrlVoter::EDIT, $shortUrl);
 
-        $this->shortUrlUpdater->update($shortUrl, $data->url);
+        $shortUrlDto = new ShortUrlDto();
+        $shortUrlDto->setUrl($data->url);
+
+        $this->shortUrlUpdater->update($shortUrl, $shortUrlDto);
 
         return $this->json(['success' => true]);
     }
